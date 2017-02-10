@@ -1,0 +1,11 @@
+Package: scankd
+Type: Package
+Title: Space-Time Scan Statistics
+Version: 1.0
+Date: 2017-02-10
+Depends: R (>= 3.0.1), sp, methods, plotrix
+Author: Clement Calenge <clement.calenge@oncfs.gouv.fr>
+Maintainer: Clement Calenge <clement.calenge@oncfs.gouv.fr>
+Description: Implements the space-time scan statistics of Kulldorff (2001).
+LazyData: true
+License: GPL (>= 2)
