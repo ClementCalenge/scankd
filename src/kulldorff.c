@@ -129,14 +129,8 @@ SEXP trouveCluster(SEXP voisinage, SEXP donnees, SEXP theorique, SEXP NparT)
 		if (d>0) {
 		    REAL(nz)[d+t*Ndiam] = REAL(nz)[(d-1)+t*Ndiam];
 		    REAL(muz)[d+t*Ndiam] = REAL(muz)[(d-1)+t*Ndiam];
-		} else {
-		    /* Et si l'on commence par le plus petit diamètre, on commence par 
-		       ajouter les valeurs du pixel courant aux effectifs déjà présents */
-		    REAL(nz)[d+t*Ndiam] = REAL(nz)[d+t*Ndiam] + REAL(VECTOR_ELT(donnees, t))[i];
-		    REAL(muz)[d+t*Ndiam] = REAL(muz)[d+t*Ndiam]+ REAL(VECTOR_ELT(theorique, t))[i];
 		}
-			    
-		/* Et celles des voisins pour le diamètre courant */
+		/* Et on ajoute les valeurs des pixels voisins pour le diamètre courant (ce qui inclut le pixel courant, inclut parmi les voisins si d=0) */
 		for (v = j1t; v<=j2t; v++) {
 		    REAL(nz)[d+t*Ndiam] = REAL(nz)[d+t*Ndiam] + REAL(VECTOR_ELT(donnees, t))[INTEGER(vec)[v]];
 		    REAL(muz)[d+t*Ndiam] = REAL(muz)[d+t*Ndiam] + REAL(VECTOR_ELT(theorique, t))[INTEGER(vec)[v]];
