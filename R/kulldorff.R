@@ -196,16 +196,13 @@ ngkd <- function(pts, radius, time)
 
     ## neigh
     ngkd <- lapply(1:nrow(pts), function(i) {
-                       if (sum(di[i,]<radius[1])==0)
-                           stop("The first radius is smaller than cellsize. Increase it.")
                        vois <- lapply(radius, function(j) {
                                           idv <- c(1:ncol(di))[di[i,]<j]
-                                          idv <- idv[idv!=i]
                                       })
 
                        for (j in 2:length(vois)) {
                            deja <- unlist(vois[c(1:(j-1))])
-                          if (is.null(vois[[j]][!(vois[[j]]%in%deja)]))
+                           if (is.null(vois[[j]][!(vois[[j]]%in%deja)]))
                                stop("two virtually identical radiuses (difference between two successive radiuses smaller than cellsize).")
                            vois[[j]] <- vois[[j]][!(vois[[j]]%in%deja)]
                        }
