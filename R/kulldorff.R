@@ -267,8 +267,6 @@ Kulldorff2001 <- function(observed, theoretical, ngkd, loglambda=TRUE)
         stop("the numbers of column in observed and theoretical do not match")
 
     NparT <- as.double(cumsum(unlist(apply(observed,2,sum))))
-    if (NparT[1]<0.000001)
-        stop("There are zero cases during the first period.\nPlease increase the duration of this period")
     resu <- .Call("trouveCluster", ngkd, observed, theoretical, NparT, PACKAGE="scankd")
 
     resu <- as.data.frame(resu)
