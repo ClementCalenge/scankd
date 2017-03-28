@@ -25,8 +25,8 @@ SEXP trouveCluster(SEXP voisinage, SEXP donnees, SEXP theorique, SEXP NparT)
 {
     /* Déclaration des variables utilisées */
     int Nt, Npts, Ndiam, i, t, d, j1t, j2t, v, j,k, tma, dma;
-    SEXP Dc, t1c, lambda, vec, j1, j2, nz, muz, lam, resu;
-    double N, vma;
+    SEXP Dc, t1c, lambda, vec, j1, j2, nz, muz, lam, resu, Nobs, Nthe;
+    double N, vma, noma, ntma;
 
     /* Quelques variables utiles */
     Nt = length(donnees); /* Nombre de semaines (nb colonnes de donnees) */
@@ -48,6 +48,12 @@ SEXP trouveCluster(SEXP voisinage, SEXP donnees, SEXP theorique, SEXP NparT)
     PROTECT(lambda = allocVector(REALSXP, Npts)); /* Va contenir, pour chaque pixel, la valeur
 						     du rapport de vraisemblance correspondant au
 						     cluster optimum */
+    PROTECT(Nobs = allocVector(REALSXP, Npts)); /* Va contenir, pour chaque pixel, la valeur
+						     du nombre d'observations dans le
+						     cluster optimum */
+    PROTECT(Nthe = allocVector(REALSXP, Npts)); /* Va contenir, pour chaque pixel, la valeur
+						   du nombre d'observations théorique dans le
+						     cluster optimum */
     PROTECT(nz = allocVector(REALSXP, Nt*Ndiam)); /* Va être renouvelé à chaque pixel: contiendra
 						     le nombre observé de points pour un 
 						     diamètre (lignes) et un nombre de 
@@ -63,14 +69,16 @@ SEXP trouveCluster(SEXP voisinage, SEXP donnees, SEXP theorique, SEXP NparT)
 						     diamètre (lignes) et un nombre de 
 						     semaines (colonnes) donnés
 						   */
-    PROTECT(resu = allocVector(VECSXP, 3)); /* Liste utilisée en sortie: première colonne:
+    PROTECT(resu = allocVector(VECSXP, 5)); /* Liste utilisée en sortie: première colonne:
 					       le rapport de vraisemblance correspondant
 					       à chaque pixel (lambda), deuxième colonne:
 					       l'indice (R, donc commençant à 1) du diamètre
 					       correspondant au cluster optimum pour ce pixel,
 					       et troisième colonne l'indice R du nombre de 
 					       semaines correspondant au cluster optimum 
-					       pour ce pixel */
+					       pour ce pixel, la quatrième, le nombre d'observations dans le cluster
+					       optimum; la cinquième, le nombre attendu
+					    */
     
     
     /* Pour chaque pixel, calcul des clusters optimums */
@@ -150,6 +158,8 @@ SEXP trouveCluster(SEXP voisinage, SEXP donnees, SEXP theorique, SEXP NparT)
 	    for (t=0; t<Nt; t++) {
 		if (REAL(lam)[d+t*Ndiam] > vma) {
 		    vma = REAL(lam)[d+t*Ndiam];
+		    noma = REAL(nz)[d+t*Ndiam];
+		    ntma = REAL(muz)[d+t*Ndiam];
 		    tma = t;
 		    dma = d;
 		}
@@ -158,6 +168,8 @@ SEXP trouveCluster(SEXP voisinage, SEXP donnees, SEXP theorique, SEXP NparT)
 
 	/* stockage */
 	REAL(lambda)[i] = vma;
+	REAL(Nobs)[i] = noma;
+	REAL(Nthe)[i] = ntma;
 	INTEGER(Dc)[i] = dma+1; /* indice dans R */
 	INTEGER(t1c)[i] = tma+1; /* indice dans R */
     }
@@ -166,9 +178,11 @@ SEXP trouveCluster(SEXP voisinage, SEXP donnees, SEXP theorique, SEXP NparT)
     SET_VECTOR_ELT(resu, 0, lambda);
     SET_VECTOR_ELT(resu, 1, Dc);
     SET_VECTOR_ELT(resu, 2, t1c);
+    SET_VECTOR_ELT(resu, 3, Nobs);
+    SET_VECTOR_ELT(resu, 4, Nthe);
     
     /* Sorties */
-    UNPROTECT(7);
+    UNPROTECT(9);
     return(resu);
 }
 
